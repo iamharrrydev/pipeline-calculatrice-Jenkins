@@ -1,9 +1,5 @@
 pipeline {
-     agent any
-            environment {
-                VOLUME = '$(pwd)/sources:/src'
-                IMAGE = 'cdrx/pyinstaller-linux'
-            }
+     agent none           
     stages {
         stage('Build') {
             agent {
@@ -31,19 +27,5 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') {
-            steps {
-                dir(path: env.BUILD_ID) {
-                    unstash(name: 'compiled-results')
-                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F prog.py'"
-                }
-            }
-            post {
-                success {
-                    archiveArtifacts "${env.BUILD_ID}/sources/dist/prog"
-                    sh "rm -rf ${env.BUILD_ID}/sources/build ${env.BUILD_ID}/sources/dist"
-                }
-            }
-        }
-    }
+     }
 }
